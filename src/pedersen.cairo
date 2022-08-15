@@ -3,8 +3,6 @@ from starkware.cairo.common.ec import assert_on_curve, ec_add, ec_double, ec_op
 from starkware.cairo.common.cairo_builtins import EcOpBuiltin
 from src.math_utils import ec_mul
 
-const MESSAGE_LENGTH = 2 ** 64 - 1
-
 func verify_pedersen{range_check_ptr, ec_op_ptr : EcOpBuiltin*}(message : felt, r : felt) -> (C : EcPoint):
     alloc_locals
     

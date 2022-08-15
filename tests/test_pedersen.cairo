@@ -10,6 +10,7 @@ from src.pedersen import verify_pedersen
 
 func main{output_ptr : felt*, range_check_ptr, ec_op_ptr : EcOpBuiltin*}():
     alloc_locals
+    
     local blinding_factor
     local committed_value : EcPoint
 
