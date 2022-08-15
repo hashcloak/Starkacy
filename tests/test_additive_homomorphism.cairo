@@ -5,7 +5,7 @@ from starkware.cairo.common.ec import assert_on_curve, ec_add, ec_double, ec_op
 from starkware.cairo.common.cairo_builtins import EcOpBuiltin
 from starkware.cairo.common.serialize import serialize_word
 from src.math_utils import ec_mul
-from src.pedersen import pedersen_commitment
+from src.pedersen import verify_pedersen
 
 func test_additive_homomorphism{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}(G : EcPoint, H : EcPoint):
     alloc_locals
@@ -20,9 +20,9 @@ func test_additive_homomorphism{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}(G 
     assert_on_curve(G)
     assert_on_curve(H)
 
-    let (C1) = pedersen_commitment(G = G, message = m1, H = H, r = r1)
-    let (C2) = pedersen_commitment(G = G, message = m2, H = H, r = r2)
-    let (C3) = pedersen_commitment(G = G, message = m1_add_m2, H = H, r = r1_add_r2)
+    let (C1) = verify_pedersen(message = m1, r = r1)
+    let (C2) = verify_pedersen(message = m2, r = r2)
+    let (C3) = verify_pedersen(message = m1_add_m2, r = r1_add_r2)
 
     assert_on_curve(C1)
     assert_on_curve(C2)
