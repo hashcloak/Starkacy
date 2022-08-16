@@ -5,40 +5,42 @@ from starkware.cairo.common.ec import assert_on_curve, ec_add, ec_double, ec_op
 from starkware.cairo.common.cairo_builtins import EcOpBuiltin
 from starkware.cairo.common.serialize import serialize_word
 from src.math_utils import ec_mul
-from src.pedersen import verify_pedersen
+from src.pedersen import commit_pedersen, PedersenCommitment
 
-func test_additive_homomorphism{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}(G : EcPoint, H : EcPoint):
+func test_additive_homomorphism{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
     alloc_locals
-    let m1 = 100
-    let m2 = 200
-    let m1_add_m2 = 300
 
-    let r1 = 10
-    let r2 = 20
-    let r1_add_r2 = 30
+    local pedersen_commitment_1 : PedersenCommitment
+    local pedersen_commitment_2 : PedersenCommitment
+    local pedersen_commitment_3 : PedersenCommitment
 
-    assert_on_curve(G)
-    assert_on_curve(H)
+    pedersen_commitment_1.message = 100
+    pedersen_commitment_2.message = 200
+    pedersen_commitment_3.message = 300
 
-    let (C1) = verify_pedersen(message = m1, r = r1)
-    let (C2) = verify_pedersen(message = m2, r = r2)
-    let (C3) = verify_pedersen(message = m1_add_m2, r = r1_add_r2)
+    pedersen_commitment_1.blinding_factor = 10
+    pedersen_commitment_2.blinding_factor = 20
+    pedersen_commitment_3.blinding_factor = 30
 
-    assert_on_curve(C1)
-    assert_on_curve(C2)
-    assert_on_curve(C3)
+    let (committed_value_1) = commit_pedersen(pedersen_commitment_1)
+    let (committed_value_2) = commit_pedersen(pedersen_commitment_2)
+    let (committed_value_3) = commit_pedersen(pedersen_commitment_3)
 
-    let (LHS) = ec_add(C1, C2)
+    assert_on_curve(committed_value_1)
+    assert_on_curve(committed_value_2)
+    assert_on_curve(committed_value_3)
 
-    assert_on_curve(LHS)
+    let (left_hand_side) = ec_add(committed_value_1, committed_value_2)
 
-    assert LHS.x = C3.x
-    assert LHS.y = C3.y
+    assert_on_curve(left_hand_side)
+
+    assert left_hand_side.x = committed_value_3.x
+    assert left_hand_side.y = committed_value_3.y
     
-    serialize_word(LHS.x)
-    serialize_word(LHS.y)
-    serialize_word(C3.x)
-    serialize_word(C3.y)
+    serialize_word(left_hand_side.x)
+    serialize_word(left_hand_side.y)
+    serialize_word(committed_value_3.x)
+    serialize_word(committed_value_1.y)
     
     return()
 end
@@ -47,13 +49,7 @@ end
 func main{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
     alloc_locals
 
-    local G : EcPoint = EcPoint(874739451078007766457464989774322083649278607533249481151382481072868806602, 152666792071518830868575557812948353041420400780739481342941381225525861407)
-    local H : EcPoint = EcPoint(1644404348220522245795652770711644747389835183387584438047505930708711545294, -200093123558048856123104458137750253894155715214098781852303092952378111954)
-
-    assert_on_curve(G)
-    assert_on_curve(H)
-
-    test_additive_homomorphism(G, H)
+    test_additive_homomorphism()
 
     return()
 end
