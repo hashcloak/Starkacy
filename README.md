@@ -24,9 +24,20 @@ To test the verifier for the pedersen commitment, run
 ```bash
 ./scripts/test_pedersen.sh
 ```
+<br/>
+
+To test the verifier for the ElGamal Encryption, run
+```bash
+./scripts/test_elgamal_encryption.sh
+```
+<br/>
+
+To test the verifier for the ElGamal Decryption, run
+```bash
+./scripts/test_elgamal_decryption.sh
+```
 
 ## Next steps
-- [ ] The current order of blinding factor < order of _STARKCURVE, maybe changed to 256-bit blinding factor.
-- [ ] 64-bit messages?
+- [ ] 64-bit messages for pedersen commitment?
+- [ ] Add possible modifications on "encoding" and "decoding"
 - [ ] Add Prostar when `ec_point` is supported by StarkNet.
-- [ ] Add ElGamal Encryption
