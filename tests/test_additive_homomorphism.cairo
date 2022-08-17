@@ -40,7 +40,7 @@ func test_additive_homomorphism{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
     serialize_word(left_hand_side.x)
     serialize_word(left_hand_side.y)
     serialize_word(committed_value_3.x)
-    serialize_word(committed_value_1.y)
+    serialize_word(committed_value_3.y)
     
     return()
 end
