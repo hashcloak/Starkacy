@@ -16,13 +16,10 @@ from starkware.cairo.common.cairo_builtins import EcOpBuiltin
 from src.math_utils import ec_mul
 from src.constants import BASE_POINT_X, BASE_POINT_Y, BASE_BLINDING_POINT_X, BASE_BLINDING_POINT_Y
 
-struct PedersenCommitment:
-    member message : felt
-    member blinding_factor : felt
-end
-
-func commit_pedersen{ec_op_ptr : EcOpBuiltin*}(pedersen_commitment : PedersenCommitment) -> (committed_value : EcPoint):
+func verify_pedersen_commitment{ec_op_ptr : EcOpBuiltin*}(message : felt, blinding_factor : felt, commitment : EcPoint):
     alloc_locals
+
+    assert_on_curve(commitment)
 
     local BASE_POINT : EcPoint = EcPoint(BASE_POINT_X, BASE_POINT_Y)
     local BASE_BLINDING_POINT : EcPoint = EcPoint(BASE_BLINDING_POINT_X, BASE_BLINDING_POINT_Y)
@@ -30,23 +27,17 @@ func commit_pedersen{ec_op_ptr : EcOpBuiltin*}(pedersen_commitment : PedersenCom
     assert_on_curve(BASE_POINT)
     assert_on_curve(BASE_BLINDING_POINT)
 
-    let (mG) = ec_mul(BASE_POINT, pedersen_commitment.message)
-    let (rH) = ec_mul(BASE_BLINDING_POINT, pedersen_commitment.blinding_factor)
+    let (mG) = ec_mul(BASE_POINT, message)
+    let (rH) = ec_mul(BASE_BLINDING_POINT, blinding_factor)
+
+    assert_on_curve(mG)
+    assert_on_curve(rH)
 
     let (committed_value) = ec_add(mG, rH)
 
-    return(committed_value = committed_value)
-end
-
-func verify_pedersen{ec_op_ptr : EcOpBuiltin*}(pedersen_commitment : PedersenCommitment, off_chain_committed_value : EcPoint):
-    alloc_locals
-
-    assert_on_curve(off_chain_committed_value)
-
-    let (committed_value) = commit_pedersen(pedersen_commitment)
     assert_on_curve(committed_value)
 
-    assert  committed_value = off_chain_committed_value
+    assert committed_value = commitment
 
     return()
 end

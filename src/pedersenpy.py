@@ -7,9 +7,9 @@ from Crypto.Util import number
 
 #r = number.getRandomNBitInteger(256) maybe used for later versions
 
-class Prover:
-    def pedersen_commit(self, m):
-        r = number.getRandomRange(1, _STARKCURVE.q - 1)
-        C = m * G + r * H
-        return C, r
+class PedersenCommitment:
+    def commit(self, message):
+        blinding_factor = number.getRandomRange(1, _STARKCURVE.q - 1)
+        C = message * G + blinding_factor * H
+        return C, blinding_factor
 
