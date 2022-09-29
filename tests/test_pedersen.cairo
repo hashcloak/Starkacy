@@ -7,13 +7,12 @@ from starkware.cairo.common.serialize import serialize_word
 from src.math_utils import ec_mul
 from src.pedersen_commitment_verifier import verify_pedersen_commitment
 
+func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
+    alloc_locals;
 
-func main{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
-    alloc_locals
-    
-    local message : felt
-    local blinding_factor : felt
-    local commitment : EcPoint
+    local message: felt;
+    local blinding_factor: felt;
+    local commitment: EcPoint;
 
     %{
         import sys, os
@@ -22,7 +21,7 @@ func main{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
 
         from src.pedersenpy import PedersenCommitment
         p = PedersenCommitment()
-        
+
         C, blinding_factor = p.commit(100)
 
         ids.blinding_factor = blinding_factor
@@ -30,12 +29,12 @@ func main{output_ptr : felt*, ec_op_ptr : EcOpBuiltin*}():
         ids.commitment.y = C.y
     %}
 
-    #assert_on_curve(off_chain_committed_value)
+    // assert_on_curve(off_chain_committed_value)
 
-    message = 100
+    message = 100;
 
-    #verify_pedersen(pedersen_commitment, off_chain_committed_value)
-    verify_pedersen_commitment(message, blinding_factor, commitment)
+    // verify_pedersen(pedersen_commitment, off_chain_committed_value)
+    verify_pedersen_commitment(message, blinding_factor, commitment);
 
-    return()
-end
+    return ();
+}
