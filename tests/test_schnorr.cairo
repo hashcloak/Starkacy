@@ -22,6 +22,10 @@ func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
         from src.pedersenpy import PedersenCommitment
         from src.schnorr import SchnorrSignature
         p = PedersenCommitment()
+        
+        zz = SchnorrSignature()
+        zzz = zz.prove(13)
+        print(zz)
 
         C, blinding_factor = p.commit(100)
 
