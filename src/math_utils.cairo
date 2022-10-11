@@ -13,12 +13,17 @@ func ec_mul{ec_op_ptr: EcOpBuiltin*}(p: EcPoint, m: felt) -> (product: EcPoint) 
 }
 
 func felt_to_uint256{range_check_ptr}(x : felt) -> (x_ : Uint256){
+    alloc_locals;
     let split = split_felt(x);
-    return (Uint256(low=split.low, high=split.high));
+    local res : Uint256 = Uint256(low = split.low, high = split.high);
+    return (x_ = res);
 }
 
 func uint256_to_felt(x : Uint256) -> (x_ : felt){
-    return (x.low + x.high * 2 ** 128);
+    alloc_locals;
+    local res = x.low + x.high * 2 ** 128;
+    return (x_ = res);
 }
+
 
 

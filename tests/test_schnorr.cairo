@@ -1,45 +1,42 @@
-%builtins output ec_op
+%builtins output range_check bitwise ec_op
 
 from starkware.cairo.common.ec_point import EcPoint
 from starkware.cairo.common.ec import assert_on_curve, ec_add, ec_double, ec_op
 from starkware.cairo.common.cairo_builtins import EcOpBuiltin
+from starkware.cairo.common.cairo_builtins import BitwiseBuiltin
 from starkware.cairo.common.serialize import serialize_word
 from src.math_utils import ec_mul
-from src.pedersen_commitment_verifier import verify_pedersen_commitment
+from src.schnorr import verify_schnorr_signature
 
-func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
+func main{output_ptr: felt*, range_check_ptr, bitwise_ptr: BitwiseBuiltin*, ec_op_ptr: EcOpBuiltin*}() {
     alloc_locals;
 
     local message: felt;
     local blinding_factor: felt;
     local commitment: EcPoint;
 
+    local alpha_G: EcPoint;
+    local response: felt;
+    local public_key: EcPoint;  
+
     %{
         import sys, os
         cwd = os.getcwd()
         sys.path.append(cwd)
 
-        from src.pedersenpy import PedersenCommitment
-        from src.schnorr import SchnorrSignature
-        p = PedersenCommitment()
+        from src.schnorrpy import SchnorrSignature
         
         zz = SchnorrSignature()
-        zzz = zz.prove(13)
-        print(zz)
+        (aa,ab,ac) = zz.prove(13)
 
-        C, blinding_factor = p.commit(100)
-
-        ids.blinding_factor = blinding_factor
-        ids.commitment.x = C.x
-        ids.commitment.y = C.y
+        ids.alpha_G.x = aa.x
+        ids.alpha_G.y = aa.y
+        ids.response = ab
+        ids.public_key.x = ac.x
+        ids.public_key.y = ac.y
     %}
 
-    // assert_on_curve(off_chain_committed_value)
-
-    message = 100;
-
-    // verify_pedersen(pedersen_commitment, off_chain_committed_value)
-    verify_pedersen_commitment(message, blinding_factor, commitment);
+    verify_schnorr_signature(alpha_G = alpha_G, response = response, public_key = public_key);
 
     return ();
 }
