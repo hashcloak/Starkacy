@@ -9,8 +9,8 @@ from Crypto.Util import number
 
 class SchnorrSignature:
     def prove(self, secret):
-        #alpha = number.getRandomRange(1, _STARKCURVE.q - 1)
-        alpha = 5
+        alpha = number.getRandomRange(1, _STARKCURVE.q - 1)
+
         alpha_G = alpha * G
         x = alpha_G.x
         y = alpha_G.y
