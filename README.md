@@ -19,10 +19,20 @@ To test the verifier for the pedersen commitment, run
 ```bash
 ./scripts/test_pedersen.sh
 ```
-
+To test the verifier for the schonrr signatures verifier, run
+```bash
+./scripts/test_schnorr.sh
+```
 
 ## Next steps
-- [ ] Update it to Cairo v.0.10.0
-- [ ] 64-bit messages for pedersen commitment?
-- [ ] Add possible modifications on "encoding" and "decoding"
-- [ ] Add Prostar when `ec_point` is supported by StarkNet.
+- [x] Update it to Cairo v.0.10.0
+- [ ] Update it to Cairo v.1.0.0 (when Elliptic Curve operations are ready for this specific version)
+- [ ] Add hash functions for Schnorr prover in Python and the verifier in Cairo
+- [ ] Add Rust version of pedersen_commitment
+- [ ] Add Rust version of Schnorr prover
+- [ ] Implement Flashproofs prover and verifier in Rust
+- [ ] Implement Flashproofs verifier in Cairo 1.0.0
+
+## Please reach us if you have any specific needs and questions for this library
+onur@hashcloak.com
+

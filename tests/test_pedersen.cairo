@@ -20,6 +20,7 @@ func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
         sys.path.append(cwd)
 
         from src.pedersenpy import PedersenCommitment
+        #from src.schnorr import SchnorrSignature
         p = PedersenCommitment()
 
         C, blinding_factor = p.commit(100)
