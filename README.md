@@ -19,9 +19,14 @@ To test the verifier for the pedersen commitment, run
 ```bash
 ./scripts/test_pedersen.sh
 ```
-To test the verifier for the schonrr signatures verifier, run
+To test the verifier for Schnorr Signature, run
 ```bash
 ./scripts/test_schnorr.sh
+```
+
+To test the pedersen_hash function for, run
+```bash
+./scripts/test_pedersen_hash.sh
 ```
 
 ## Next steps
@@ -32,7 +37,3 @@ To test the verifier for the schonrr signatures verifier, run
 - [ ] Add Rust version of Schnorr prover
 - [ ] Implement Flashproofs prover and verifier in Rust
 - [ ] Implement Flashproofs verifier in Cairo 1.0.0
-
-## Please reach us if you have any specific needs and questions for this library
-onur@hashcloak.com
-
