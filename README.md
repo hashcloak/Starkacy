@@ -19,7 +19,6 @@ To test the verifier for the pedersen commitment, run
 ```bash
 ./scripts/test_pedersen.sh
 ```
-
 To test the verifier for Schnorr Signature, run
 ```bash
 ./scripts/test_schnorr.sh
@@ -32,10 +31,9 @@ To test the pedersen_hash function for, run
 
 ## Next steps
 - [x] Update it to Cairo v.0.10.0
-- [x] Add hash functions for Schnorr prover in Python and the verifier in Cairo
 - [ ] Update it to Cairo v.1.0.0 (when Elliptic Curve operations are ready for this specific version)
+- [ ] Add hash functions for Schnorr prover in Python and the verifier in Cairo
 - [ ] Add Rust version of pedersen_commitment
 - [ ] Add Rust version of Schnorr prover
 - [ ] Implement Flashproofs prover and verifier in Rust
 - [ ] Implement Flashproofs verifier in Cairo 1.0.0
-
