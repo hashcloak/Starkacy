@@ -19,6 +19,10 @@ To test the verifier for the pedersen commitment, run
 ```bash
 ./scripts/test_pedersen.sh
 ```
+To test the verifier for Schnorr Signature, run
+```bash
+./scripts/test_schnorr.sh
+```
 
 To test the verifier for Schnorr Signature, run
 ```bash
@@ -38,4 +42,3 @@ To test the pedersen_hash function for, run
 - [ ] Add Rust version of Schnorr prover
 - [ ] Implement Flashproofs prover and verifier in Rust
 - [ ] Implement Flashproofs verifier in Cairo 1.0.0
-
