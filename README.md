@@ -38,4 +38,3 @@ To test the pedersen_hash function for, run
 - [ ] Add Rust version of Schnorr prover
 - [ ] Implement Flashproofs prover and verifier in Rust
 - [ ] Implement Flashproofs verifier in Cairo 1.0.0
-
