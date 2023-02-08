@@ -1,21 +1,11 @@
-%builtins output
-//%builtins output ec_op
 // Functions for Starkjub Curve
 // ax^2 + y^2 = 1 + dx^2y^2 where
 // a = 146640 and d = 146636
 // The point at infinity is represented as (0, 1)
 
-//from starkware.cairo.common.cairo_builtins import EcOpBuiltin
 from starkware.cairo.common.ec_point import EcPoint
 from starkware.cairo.common.math import is_quad_residue
 from starkware.cairo.common.serialize import serialize_word
-
-struct EcOpBuiltin {
-    p: EcPoint,
-    q: EcPoint,
-    m: felt,
-    r: EcPoint,
-}
 
 // Add libraries for testing purposes
 namespace Starkjub {
@@ -34,6 +24,7 @@ namespace Starkjub {
 // Fix the check for Identity element
 func assert_on_curve(p: EcPoint) {
     alloc_locals;
+
     if(p.x == 0) {
         assert p.y = 1;
         return ();
@@ -47,6 +38,7 @@ func assert_on_curve(p: EcPoint) {
 // Fix the check for Identity element
 func ec_add(p: EcPoint, q: EcPoint) -> (r: EcPoint) {
     alloc_locals;
+
     tempvar s = Starkjub.d * p.x * p.y * q.x * q.y;
     tempvar x = (p.x * q.y + p.y * q.x) * (1 / (1+s)) ;
     tempvar y = (p.y * q.y - Starkjub.a * p.x * q.x) * (1 / (1 - s));
@@ -56,6 +48,7 @@ func ec_add(p: EcPoint, q: EcPoint) -> (r: EcPoint) {
 // Fix the check for Identity element
 func ec_double(p: EcPoint) -> (r: EcPoint) {
     alloc_locals;
+
     let (res) = ec_add(p, p);
     return(r = res);
 }
@@ -65,54 +58,26 @@ func ec_sub(p: EcPoint, q: EcPoint) -> (r: EcPoint) {
     return ec_add(p=p, q= EcPoint(x = -p.x, y=q.y));
 }
 
-func ec_op{}(p: EcPoint, m: felt, q: EcPoint) -> (r: EcPoint) {
-    alloc_locals;
-
-    let ec_op_ptr: EcOpBuiltin;
-    // (0, 0), which represents the point at infinity, is the only point with y = 0.
-    if (q.y == 0) {
-        return (r=p);
+func ec_mul{range_check_ptr}(point: EcPoint, scalar: felt) -> (res: EcPoint) {
+    if (scalar == 0) {
+        with_attr error_message("Too large scalar") {
+            scalar = 0;
+        }
+        let identity_point = EcPoint(0, 1);
+        return (res=identity_point);
     }
 
-    local s: EcPoint;
-    %{
-        import sys, os
-        cwd = os.getcwd()
-        sys.path.append(cwd)
-
-        from src.math_utils_py import *
-
-        random_point = random_starkjub_point()
-        ids.s.x = random_point.x
-        ids.s.y = random_point.y
-    %}
-
-    let p_plus_s: EcPoint = ec_add(p, s);
-
-    assert ec_op_ptr.p = p_plus_s;
-    assert ec_op_ptr.m = m;
-    assert ec_op_ptr.q = q;
-    let r: EcPoint = ec_add(ec_op_ptr.r, EcPoint(x=-s.x, y=s.y));
-    let ec_op_ptr = ec_op_ptr + EcOpBuiltin.SIZE;
-    return (r=r);
-}
-
-func ec_mul{ec_op_ptr: EcOpBuiltin*}(p: EcPoint, m: felt) -> (multiplication: EcPoint) {
     alloc_locals;
-    local id_point: EcPoint = EcPoint(0, 1);
-    let (r: EcPoint) = ec_op(id_point, m, p);
-    return (multiplication=r);
+    let (double_point: EcPoint) = ec_double(point);
+    %{ memory[ap] = (ids.scalar % PRIME) % 2 %}
+    jmp odd if [ap] != 0, ap++;
+    return ec_mul(point=double_point, scalar=scalar / 2);
+
+    odd:
+    let inner_res: EcPoint = ec_mul(
+        point=double_point, scalar=(scalar - 1) / 2
+    );
+
+    let (res: EcPoint) = ec_add(p=point, q=inner_res);
+    return (res=res);
 }
-
-func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
-    alloc_locals;
-    local G: EcPoint = EcPoint(Starkjub.GEN_X, Starkjub.GEN_Y);
-    assert_on_curve(G);
-    let (D) = ec_add(G, G);
-    assert_on_curve(D);
-    let (zero) = ec_sub(G, G);
-    let (xk) = ec_mul(G, 2);
-
-    return();
-}
-

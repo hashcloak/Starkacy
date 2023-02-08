@@ -1,31 +1,30 @@
-%builtins output ec_op
-// Functions for Starkjub Curve
-// ax^2 + y^2 = 1 + dx^2y^2 where
-// a = 146640 and d = 146636
-// The point at infinity is represented as (0, 1)
+%builtins output range_check
 
-from starkware.cairo.common.cairo_builtins import EcOpBuiltin
+from src.starkjub import assert_on_curve, ec_add, ec_mul, ec_double, ec_sub, Starkjub
 from starkware.cairo.common.ec_point import EcPoint
-from starkware.cairo.common.math import is_quad_residue
 from starkware.cairo.common.serialize import serialize_word
 
-func main{output_ptr: felt*, ec_op_ptr: EcOpBuiltin*}() {
+func main{output_ptr: felt*, range_check_ptr}() {
     alloc_locals;
     local G: EcPoint = EcPoint(Starkjub.GEN_X, Starkjub.GEN_Y);
     assert_on_curve(G);
     let (D) = ec_add(G, G);
     assert_on_curve(D);
     let (zero) = ec_sub(G, G);
-    assert_on_curve(zero);
-    assert_on_curve(EcPoint(0, 1));
-    let (add_1) = ec_add(G, EcPoint(0, 1));
-    //let (add_2) = ec_add(G, EcPoint(0, -1));
-    assert G = G;
-    assert G = add_1;
-    //assert G = add_2;
-    serialize_word(G.x);
-    serialize_word(G.y);
-    serialize_word(add_1.x);
-    serialize_word(add_1.y);
+    let (doubling) = ec_double(G);
+    assert_on_curve(doubling);
+    let (xk) = ec_mul(G, 452312848583266401712165347886883763197416885958242462530951491185349408851);
+    let false_identity: EcPoint = EcPoint(0, -1);
+    let identity: EcPoint = EcPoint(0, 1);
+    let (x) = ec_double(identity);
+    serialize_word(x.x);
+    serialize_word(x.y);
+    assert_on_curve(xk);
+    serialize_word(xk.x);
+    serialize_word(D.x);
+    serialize_word(xk.y);
+    serialize_word(D.y);
+
     return();
 }
+
