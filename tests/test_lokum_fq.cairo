@@ -37,6 +37,7 @@ func main{output_ptr: felt*, range_check_ptr}() {
     //serialize_word(x.d2);
     //serialize_word(x.d3);
     //serialize_word(x.d4);
+    //
 
     // Test for sub works well
     let sub_zero_one = fq_bigint5.sub(&zero, &one);
