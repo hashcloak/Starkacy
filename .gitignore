@@ -11,8 +11,3 @@ Cargo.lock
 
 ./tests/test_keccak.cairo
 ./scripts/test_keccak.sh
-./scripts/test_flashproofs_cairo.sh
-./src/flashproofs.cairo
-
-
-
